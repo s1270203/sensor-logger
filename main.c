@@ -2,6 +2,8 @@
 #include "average.h" 
 #include "minmax.h"
 #include "filter.h"
+#include "sensor.h"
+#include "logger.h"
 
 /**
  * main.c
@@ -13,15 +15,29 @@
  * - average.{h,c} : 平均を求める関数
  * - minmax.{h,c} : 最小・最大を求める関数
  * - filter.{h,c} : 外れ値を無視した平均を求める関数
+ * - sensor.{h} : 構造体定義
+ * - logger.{h,c} : CSV形式での出力関数
  */
+
+SensorData data[] = {
+  {100, "10:00:00"},
+  {102, "10:00:01"},
+  {98,  "10:00:02"},
+  {150, "10:00:03"},
+  {101, "10:00:04"}
+};
+
 int main(){
   // センサーデータのサンプル（仮想値）
-  int data[] = {100, 102, 98, 150, 101};
+  int raw_data[5];
   int length =  5;
   int threshold = 10;
+  for(int i = 0; i < length; ++i){
+    raw_data[i] = data[i].value;
+  }
 
   // 平均を計算
-  float avg = calculate_average(data, length);
+  float avg = calculate_average(raw_data, length);
 
   // 平均の結果を表示
   printf("Average = %.2f\n", avg);
@@ -30,15 +46,25 @@ int main(){
   int min, max;
 
   // 最小値最大値を求める
-  calculate_min_max(data, length, &min, &max);
+  calculate_min_max(raw_data, length, &min, &max);
 
   // 最小値最大値に結果を表示
   printf("Min = %d, Max = %d\n", min, max);
 
   // 外れ値を無視した平均の計算
-  float filtered_avg = calculate_filtered_average(data, length, threshold);
+  float filtered_avg = calculate_filtered_average(raw_data, length, threshold);
 
   // 外れ値を無視した平均結果を表示
   printf("Filtered Average = %.2f\n",filtered_avg);
+
+  // 構造体ないデータCSV形式で表示
+  print_sensor_log(data, length);
+
+  // による安全な文字列整形
+  SensorData d = {100, "10:00:00"};
+  char line[64];
+  format_sensor_log(&d, line, sizeof(line));
+  printf("Log line: %s\n", line);
+
   return 0;
 }

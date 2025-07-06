@@ -11,13 +11,13 @@
  */
 float calculate_filtered_average(const int *data, int length, int threshold){
   float avg = calculate_average(data, length);
-  int FilterData[length];
+  int filtered_data[length];
   int cnt = 0;
   for(int i = 0; i < length; ++i){
     if(fabs(data[i] - avg) < threshold){
-      FilterData[cnt] = data[i];
-      cnt++;
+      filtered_data[cnt++] = data[i];
     }
   }
-  return calculate_average(FilterData, cnt-1);
+  if(cnt == 0) return 0.0f;
+  return calculate_average(filtered_data, cnt);
 }
