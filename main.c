@@ -27,11 +27,14 @@ SensorData data[] = {
   {101, "10:00:04"}
 };
 
+#define DATA_LENGTH 5
+#define THRESHOLD 10
+
 int main(){
   // センサーデータのサンプル（仮想値）
-  int raw_data[5];
-  int length =  5;
-  int threshold = 10;
+  int raw_data[DATA_LENGTH];
+  int length =  DATA_LENGTH;
+  int threshold = THRESHOLD;
   for(int i = 0; i < length; ++i){
     raw_data[i] = data[i].value;
   }
@@ -57,13 +60,14 @@ int main(){
   // 外れ値を無視した平均結果を表示
   printf("Filtered Average = %.2f\n",filtered_avg);
 
-  // 構造体ないデータCSV形式で表示
+  // 構造体データをCSV形式で表示
   print_sensor_log(data, length);
 
-  // による安全な文字列整形
   SensorData d = {100, "10:00:00"};
   char line[64];
+  // snprintf()による安全な文字列整形
   format_sensor_log(&d, line, sizeof(line));
+  // 整形された文字列の表示
   printf("Log line: %s\n", line);
 
   return 0;
